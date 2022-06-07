@@ -14,7 +14,7 @@
 
       /**
        * @param thing {any}
-       * @badness {number}
+       * @param badness {number}
        */
       function updateBestSmallThings1(thing, badness) {
         if (bestSmallThings.length != 0) {
