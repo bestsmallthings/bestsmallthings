@@ -27,11 +27,11 @@
         }
         bestSmallThingCommonSize = size(thing);
         lowestBadness = badness;
-        addToBestSmallThings();
+        addToBestSmallThings(thing);
         updateBestSmallThings = updateBestSmallThings2;
       }
 
-      function updateBestSmallThings2() {
+      function updateBestSmallThings2(thing, badness) {
         if (badness > lowestBadness) {
           return;
         }
@@ -46,7 +46,7 @@
           return;
         }
         if (sizeOfThing === sizeOfBestSmallThing)
-          addToBestSmallThings();
+          addToBestSmallThings(thing);
         }
       }
 
