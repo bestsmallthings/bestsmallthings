@@ -45,7 +45,7 @@
           improveBestSmallThings(thing, badness, sizeOfThing);
           return;
         }
-        if (sizeOfThing === sizeOfBestSmallThing) {
+        if (sizeOfThing === bestSmallThingCommonSize) {
           addToBestSmallThings(thing);
         }
       }
