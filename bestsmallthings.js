@@ -50,13 +50,13 @@
         }
       }
 
+      export let updateBestSmallThings = updateBestSmallThings1;
       export let lowestBadness = Infinity;
       export let bestSmallThings = [];
       let bestSmallThingCommonSize = -1;
       let size;
       let onBestSmallThingAdded;
       let onBestSmallThingsImproved;
-      let updateBestSmallThings = updateBestSmallThings1;
 
       function addToBestSmallThings(thing) {
           bestSmallThings.push(thing);
