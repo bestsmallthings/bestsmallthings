@@ -1,3 +1,8 @@
+      /**
+       * @param sizeFn {(thing:any)=>number}
+       * @param onBestSmallThingAddedFn {()=>void}    
+       * @param onBestSmallThingsImprovedFn {()=>void}    
+      */
       export function configUpdateBestSmallThings(
         sizeFn,
         onBestSmallThingAddedFn,
