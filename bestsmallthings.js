@@ -13,7 +13,7 @@
         onBestSmallThingsImproved = onBestSmallThingsImprovedFn;
         lowestBadness = Infinity;
         bestSmallThings = [];
-        bestSmallThingCommonSize = -1;
+        bestSmallThingsCommonSize = -1;
         updateBestSmallThings = updateBestSmallThings1;    
       }
 
@@ -25,7 +25,7 @@
         if (bestSmallThings.length != 0) {
             throw new Error('internal state error!');  
         }
-        bestSmallThingCommonSize = size(thing);
+        bestSmallThingsCommonSize = size(thing);
         lowestBadness = badness;
         addToBestSmallThings(thing);
         updateBestSmallThings = updateBestSmallThings2;
@@ -41,11 +41,11 @@
           improveBestSmallThings(thing, badness, sizeOfThing);
           return;
         }
-        if (sizeOfThing < bestSmallThingCommonSize) {
+        if (sizeOfThing < bestSmallThingsCommonSize) {
           improveBestSmallThings(thing, badness, sizeOfThing);
           return;
         }
-        if (sizeOfThing === bestSmallThingCommonSize) {
+        if (sizeOfThing === bestSmallThingsCommonSize) {
           addToBestSmallThings(thing);
         }
       }
@@ -53,7 +53,7 @@
       export let updateBestSmallThings = updateBestSmallThings1;
       export let lowestBadness = Infinity;
       export let bestSmallThings = [];
-      export let bestSmallThingCommonSize = -1;
+      export let bestSmallThingsCommonSize = -1;
       let size;
       let onBestSmallThingAdded;
       let onBestSmallThingsImproved;
@@ -64,7 +64,7 @@
       }
 
       function improveBestSmallThings(thing, badness, sizeOfThing) {
-          bestSmallThingCommonSize = sizeOfThing;   
+          bestSmallThingsCommonSize = sizeOfThing;   
           bestSmallThings = [thing];
           onBestSmallThingsImproved();
       }
