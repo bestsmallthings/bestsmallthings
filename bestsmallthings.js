@@ -38,11 +38,11 @@
         const sizeOfThing = size(thing);    
         if(badness < lowestBadness) {
           lowestBadness = badness;
-          improveBestSmallThings(thing, badness, sizeOfThing);
+          improveBestSmallThings(thing, sizeOfThing);
           return;
         }
         if (sizeOfThing < bestSmallThingsCommonSize) {
-          improveBestSmallThings(thing, badness, sizeOfThing);
+          improveBestSmallThings(thing, sizeOfThing);
           return;
         }
         if (sizeOfThing === bestSmallThingsCommonSize) {
@@ -63,7 +63,7 @@
           onBestSmallThingAdded();
       }
 
-      function improveBestSmallThings(thing, badness, sizeOfThing) {
+      function improveBestSmallThings(thing, sizeOfThing) {
           bestSmallThingsCommonSize = sizeOfThing;   
           bestSmallThings = [thing];
           onBestSmallThingsImproved();
