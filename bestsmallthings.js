@@ -19,6 +19,9 @@ export function configUpdateBestSmallThings(
   updateBestSmallThings = updateBestSmallThings1;
 }
 
+/**
+ * @param {boolean} x
+ */
 function assert(x){if(!x)throw new Error('assertion failed');}
 
 let dbgAlreadyInited = false;
@@ -27,16 +30,20 @@ let dbgAlreadyInited = false;
  * @param thing {any}
  * @param badness {number}
  */
-function updateBestSmallThings1(thing, badness) {
+async function updateBestSmallThings1(thing, badness) {
   assert(dbgAlreadyInited);
   assert (bestSmallThings.length == 0);
   bestSmallThingsCommonSize = size(thing);
   lowestBadness = badness;
-  addToBestSmallThings(thing);
+  await addToBestSmallThings(thing);
   updateBestSmallThings = updateBestSmallThings2;
 }
 
-function updateBestSmallThings2(thing, badness) {
+/**
+ * @param {any} thing
+ * @param {number} badness
+ */
+async function updateBestSmallThings2(thing, badness) {
   assert(dbgAlreadyInited);
   if (badness > lowestBadness) {
     return;
@@ -44,15 +51,15 @@ function updateBestSmallThings2(thing, badness) {
   const sizeOfThing = size(thing);
   if (badness < lowestBadness) {
     lowestBadness = badness;
-    improveBestSmallThings(thing, sizeOfThing);
+    await improveBestSmallThings(thing, sizeOfThing);
     return;
   }
   if (sizeOfThing < bestSmallThingsCommonSize) {
-    improveBestSmallThings(thing, sizeOfThing);
+    await improveBestSmallThings(thing, sizeOfThing);
     return;
   }
   if (sizeOfThing === bestSmallThingsCommonSize) {
-    addToBestSmallThings(thing);
+    await addToBestSmallThings(thing);
   }
 }
 
@@ -69,13 +76,20 @@ let size;
 let onBestSmallThingAdded;
 let onBestSmallThingsImproved;
 
-function addToBestSmallThings(thing) {
+/**
+ * @param {any} thing
+ */
+async function addToBestSmallThings(thing) {
   bestSmallThings.push(thing);
-  onBestSmallThingAdded();
+  await onBestSmallThingAdded();
 }
 
-function improveBestSmallThings(thing, sizeOfThing) {
+/**
+ * @param {any} thing
+ * @param {number} sizeOfThing
+ */
+async function improveBestSmallThings(thing, sizeOfThing) {
   bestSmallThingsCommonSize = sizeOfThing;
   bestSmallThings = [thing];
-  onBestSmallThingsImproved();
+  await onBestSmallThingsImproved();
 }
