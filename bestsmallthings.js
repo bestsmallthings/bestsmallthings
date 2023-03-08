@@ -1,95 +1,97 @@
 /**
- * @param sizeFn {(thing:any)=>number}
- * @param onBestSmallThingAddedFn {()=>void}
- * @param onBestSmallThingsImprovedFn {()=>void}
+ * @param {()=>Promise<void>} onBestSmallThingAddedFn
+ * @param {()=>Promise<void>} onBestSmallThingsImprovedFn
+ * @param {(x:any,y:any)=>boolean} isXBetterThanYFn must judge in terms of
+ * smallness also
  */
 export function configUpdateBestSmallThings(
-  sizeFn,
   onBestSmallThingAddedFn,
-  onBestSmallThingsImprovedFn
+  onBestSmallThingsImprovedFn,
+  isXBetterThanYFn
 ) {
-  size = sizeFn;
   onBestSmallThingAdded = onBestSmallThingAddedFn;
   onBestSmallThingsImproved = onBestSmallThingsImprovedFn;
-  lowestBadness = Infinity;
+  isXBetterThanY = isXBetterThanYFn;
+  lowestBadness = null;
   assert(!dbgAlreadyInited);
   dbgAlreadyInited = true;
   bestSmallThings = [];
-  bestSmallThingsCommonSize = -1;
-  updateBestSmallThings = updateBestSmallThings1;
+  updateBestSmallThings = updateBestSmallThingsWhenNoneFoundSoFar;
 }
-
-/**
- * @param {boolean} x
- */
-function assert(x){if(!x)throw new Error('assertion failed');}
-
-let dbgAlreadyInited = false;
 
 /**
  * @param thing {any}
- * @param badness {number}
+ * @param badness {any}
  */
-async function updateBestSmallThings1(thing, badness) {
+async function updateBestSmallThingsWhenNoneFoundSoFar(thing, badness) {
   assert(dbgAlreadyInited);
-  assert (bestSmallThings.length == 0);
-  bestSmallThingsCommonSize = size(thing);
+  assert(bestSmallThings.length == 0);
   lowestBadness = badness;
   await addToBestSmallThings(thing);
-  updateBestSmallThings = updateBestSmallThings2;
+  updateBestSmallThings = updateBestSmallThingsWhenSomeAlreadyFound;
 }
 
 /**
  * @param {any} thing
- * @param {number} badness
+ * @param {any} badness
  */
-async function updateBestSmallThings2(thing, badness) {
+async function updateBestSmallThingsWhenSomeAlreadyFound(thing, badness) {
   assert(dbgAlreadyInited);
-  if (badness > lowestBadness) {
+  if (lowestBadness == null) {
+    assert(false);
     return;
   }
-  const sizeOfThing = size(thing);
-  if (badness < lowestBadness) {
+  if (isXBetterThanY(lowestBadness, badness)) {
+    return;
+  }
+
+  if (isXBetterThanY(badness, lowestBadness)) {
     lowestBadness = badness;
-    await improveBestSmallThings(thing, sizeOfThing);
+    await improveBestSmallThings(thing);
     return;
   }
-  if (sizeOfThing < bestSmallThingsCommonSize) {
-    await improveBestSmallThings(thing, sizeOfThing);
-    return;
-  }
-  if (sizeOfThing === bestSmallThingsCommonSize) {
-    await addToBestSmallThings(thing);
-  }
+
+  await addToBestSmallThings(thing);
 }
 
-export let updateBestSmallThings = updateBestSmallThings1;
-export let lowestBadness = Infinity;
+export let updateBestSmallThings = updateBestSmallThingsWhenNoneFoundSoFar;
 
-/**
- * @type any[]
- */
+/** @type {any} */
+export let lowestBadness = null;
+
+/** @type any[] */
 export let bestSmallThings = [];
 
-export let bestSmallThingsCommonSize = -1;
-let size;
+/** @type {() => Promise<void>} */
 let onBestSmallThingAdded;
+
+/** @type {() => Promise<void>} */
 let onBestSmallThingsImproved;
 
-/**
- * @param {any} thing
- */
+/** @type {(x:any,y:any)=>boolean} */
+let isXBetterThanY;
+
+/** @param {any} thing */
 async function addToBestSmallThings(thing) {
   bestSmallThings.push(thing);
+  if (bestSmallThings.length == 1) {
+    await onBestSmallThingsImproved();
+  }
   await onBestSmallThingAdded();
 }
 
-/**
- * @param {any} thing
- * @param {number} sizeOfThing
- */
-async function improveBestSmallThings(thing, sizeOfThing) {
-  bestSmallThingsCommonSize = sizeOfThing;
+/** @param {any} thing */
+async function improveBestSmallThings(thing) {
   bestSmallThings = [thing];
   await onBestSmallThingsImproved();
 }
+
+/** @param {boolean} x */
+function assert(x) {
+  if (!x) {
+    debugger;
+    throw new Error("assertion failed");
+  }
+}
+
+let dbgAlreadyInited = false;
